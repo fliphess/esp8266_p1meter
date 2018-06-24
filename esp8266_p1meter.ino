@@ -139,10 +139,26 @@ void send_data_to_broker() {
 // * P1                             *
 // **********************************
 
+unsigned int CRC16(unsigned int crc, unsigned char *buf, int len) {
+
+	for (int pos = 0; pos < len; pos++) {
+		crc ^= (unsigned int)buf[pos];    // XOR byte into least sig. byte of crc
+		for (int i = 8; i != 0; i--) {    // Loop over each bit
+			if ((crc & 0x0001) != 0) {      // If the LSB is set
+				crc >>= 1;                    // Shift right and XOR 0xA001
+				crc ^= 0xA001;
+			}
+			else                            // Else LSB is not set
+				crc >>= 1;                    // Just shift right
+		}
+	}
+	return crc;
+}
+
 long getValue(char *buffer, int maxlen) {
 
     int s = FindCharInArrayRev(buffer, '(', maxlen - 2);
-    if (s < 8) return 0;
+    if (s < 4) return 0;
     if (s > 32) s = 32;
 
     int l = FindCharInArrayRev(buffer, '*', maxlen - 2) - s - 1;
@@ -174,17 +190,37 @@ bool isNumber(char *res, int len) {
 }
 
 bool decode_telegram(int len) {
-    //need to check for start
     int startChar = FindCharInArrayRev(telegram, '/', len);
     int endChar = FindCharInArrayRev(telegram, '!', len);
-    bool endOfMessage = false;
-
-    if (endChar >= 0) {
-        endOfMessage = true;
-    }
+    bool validCRCFound = false;
 
     for (int cnt = 0; cnt < len; cnt++)
         Serial.print(telegram[cnt]);
+
+    if (startChar >= 0) {
+        // * Start found. Reset CRC calculation
+        currentCRC = CRC16(0x0000,(unsigned char *) telegram+startChar, len-startChar);
+    }
+    else if (endChar >= 0) {
+        // * Add to crc calc
+        currentCRC = CRC16(currentCRC,(unsigned char*)telegram+endChar, 1);
+
+        char messageCRC[5];
+        strncpy(messageCRC, telegram + endChar + 1, 4);
+
+        messageCRC[4] = 0;   // * Thanks to HarmOtten (issue 5)
+        validCRCFound = (strtol(messageCRC, NULL, 16) == currentCRC);
+
+        if (validCRCFound)
+            Serial.println("\nVALID CRC FOUND!");
+        else
+            Serial.println("\n===INVALID CRC FOUND!===");
+
+        currentCRC = 0;
+    }
+    else {
+        currentCRC = CRC16(currentCRC, (unsigned char*) telegram, len);
+    }
 
     // 1-0:1.8.1(000992.992*kWh)
     // 1-0:1.8.1 = Elektra verbruik laag tarief (DSMR v4.0)
@@ -223,7 +259,7 @@ bool decode_telegram(int len) {
         GAS_METER_M3 = getValue(telegram, len);
     }
 
-    return endOfMessage;
+    return validCRCFound;
 }
 
 void read_p1_serial() {

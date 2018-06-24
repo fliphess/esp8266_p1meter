@@ -45,3 +45,6 @@ long ACTUAL_CONSUMPTION;
 long INSTANT_POWER_CURRENT;
 long INSTANT_POWER_USAGE;
 long GAS_METER_M3;
+
+// * Set during CRC checking
+unsigned int currentCRC = 0;

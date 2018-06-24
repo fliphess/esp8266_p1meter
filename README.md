@@ -1,6 +1,6 @@
 # esp8266_p1meter
 
-Software for the ESP2866 that sends P1 smart meter data to an mqtt broker (with CRC checking and OTA firmware updates)
+Software for the ESP2866 that sends P1 smart meter data to an mqtt broker (with OTA firmware updates)
 
 ### Connection of the P1 meter to the ESP8266
 
@@ -19,9 +19,11 @@ Many howto's mention RTS requires 5V (VIN) to activate the P1 port, but for me 3
 ## Thanks to
 
 This sketch is mostly copied and pasted from several other projects.
-Standing on the heads of giants, big thanks and great respect to:
+Standing on the heads of giants, big thanks and great respect to the writers and/or creators of:
 
 - https://github.com/jantenhove/P1-Meter-ESP8266
 - https://github.com/neographikal/P1-Meter-ESP8266-MQTT
 - http://romix.macuser.nl/software.html
-
+- http://gejanssen.com/howto/Slimme-meter-uitlezen/
+- https://github.com/rroethof/p1reader/blob/master/README.md
+- http://domoticx.com/p1-poort-slimme-meter-hardware/

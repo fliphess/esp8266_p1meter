@@ -38,13 +38,20 @@ char MQTT_PASS[32] = "";
 // * Set to store received telegram
 char telegram[P1_MAXLINELENGTH];
 
-// * Set to store the data read
+// * Set to store the data values read
 long CONSUMPTION_LOW_TARIF;
 long CONSUMPTION_HIGH_TARIF;
 long ACTUAL_CONSUMPTION;
 long INSTANT_POWER_CURRENT;
 long INSTANT_POWER_USAGE;
 long GAS_METER_M3;
+
+// Set to store data counters read
+long ACTUAL_TARIF;
+long SHORT_POWER_OUTAGES;
+long LONG_POWER_OUTAGES;
+long SHORT_POWER_DROPS;
+long SHORT_POWER_PEAKS;
 
 // * Set during CRC checking
 unsigned int currentCRC = 0;

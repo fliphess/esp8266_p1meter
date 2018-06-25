@@ -36,8 +36,73 @@ sensors/power/p1meter/short_power_drops 0
 sensors/power/p1meter/short_power_peaks 0
 ```
 
-As I don't have solar panels (yet) I do not collect the data for power returns as I don't have any. 
+As I don't have solar panels (yet) I do not collect the data for power returns as I don't have any.
 They are however easy to add if you know the codes used.
+
+## Home Assistant Configuration
+
+I use this for home assistant `sensors.yaml`:
+
+```
+- platform: mqtt
+  name: P1 Consumption Low Tarif
+  unit_of_measurement: 'kWh'
+  state_topic: "sensors/power/p1meter/consumption_low_tarif"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 Consumption High Tarif
+  unit_of_measurement: 'kWh'
+  state_topic: "sensors/power/p1meter/consumption_high_tarif"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 Actual Power Consumption
+  unit_of_measurement: 'kW'
+  state_topic: "sensors/power/p1meter/actual_consumption"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 Instant Power Usage
+  unit_of_measurement: 'kW'
+  state_topic: "sensors/power/p1meter/instant_power_usage"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 Instant Power Current
+  unit_of_measurement: 'A'
+  state_topic: "sensors/power/p1meter/instant_power_current"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 Gas Usage
+  unit_of_measurement: 'm3'
+  state_topic: "sensors/power/p1meter/gas_meter_m3"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 Actual Tarif Group
+  state_topic: "sensors/power/p1meter/actual_tarif_group"
+
+- platform: mqtt
+  name: P1 Short Power Outages
+  state_topic: "sensors/power/p1meter/short_power_outages"
+
+- platform: mqtt
+  name: P1 Long Power Outages
+  state_topic: "sensors/power/p1meter/long_power_outages"
+
+- platform: mqtt
+  name: P1 Short Power Drops
+  state_topic: "sensors/power/p1meter/short_power_drops"
+
+- platform: mqtt
+  name: P1 Short Power Peaks
+  state_topic: "sensors/power/p1meter/short_power_peaks"
+```
+
+The automations are yours to create.
+And always remember that sending alerts in case of a power outtage only make sense when you own a UPS battery :)
 
 
 ## Thanks to

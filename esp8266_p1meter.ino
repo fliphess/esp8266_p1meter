@@ -346,7 +346,10 @@ void read_p1_serial()
 
         while (p1_serial.available())
         {
+            ESP.wdtDisable();
             int len = p1_serial.readBytesUntil('\n', telegram, P1_MAXLINELENGTH);
+            ESP.wdtEnable(1);
+
             telegram[len] = '\n';
             telegram[len + 1] = 0;
             yield();

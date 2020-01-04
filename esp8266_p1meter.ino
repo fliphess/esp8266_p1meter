@@ -23,7 +23,7 @@ WiFiClient espClient;
 PubSubClient mqtt_client(espClient);
 
 // * Initiate Software Serial
-SoftwareSerial p1_serial(P1_SERIAL_RX, -1, true, P1_MAXLINELENGTH); // (RX, TX. inverted, buffer)
+SoftwareSerial p1_serial(P1_SERIAL_RX, -1, true); // (RX, TX. inverted)
 
 // **********************************
 // * WIFI                           *

@@ -229,8 +229,8 @@ bool decode_telegram(int len)
 
     for (int cnt = 0; cnt < len; cnt++) {
         logger->print(telegram[cnt]);
-        logger->print("\n");
     }
+    logger->print("\n");
 
     if (startChar >= 0)
     {
@@ -382,9 +382,10 @@ void processLine(int len) {
 
     bool result = decode_telegram(len + 1);
     if (result) {
-                send_data_to_broker();
-        }
+        send_data_to_broker();
+        LAST_UPDATE_SENT = millis();
     }
+}
 
 // **********************************
 // * EEPROM helpers                 *
@@ -551,7 +552,7 @@ void setup()
     WiFiManager wifiManager;
 
     if (USE_HARDWARE_SERIAL) {
-      wifiManager.setDebugOutput(false);
+        wifiManager.setDebugOutput(false);
     }
 
     // * Reset settings - uncomment for testing
@@ -629,11 +630,10 @@ void setup()
 void loop()
 {
     ArduinoOTA.handle();
+    long now = millis();
 
     if (!mqtt_client.connected())
     {
-        long now = millis();
-
         if (now - LAST_RECONNECT_ATTEMPT > 5000)
         {
             LAST_RECONNECT_ATTEMPT = now;
@@ -648,10 +648,12 @@ void loop()
     {
         mqtt_client.loop();
     }
-
-    if (USE_HARDWARE_SERIAL) {
-        read_p1_hardwareserial();
-    } else {
-    read_p1_serial();
-}
+    
+    if (now - LAST_UPDATE_SENT > UPDATE_INTERVAL) {
+        if (USE_HARDWARE_SERIAL) {
+            read_p1_hardwareserial();
+        } else {
+            read_p1_serial();
+        }
+    }
 }

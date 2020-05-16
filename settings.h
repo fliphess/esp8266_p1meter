@@ -2,7 +2,11 @@
 // * Ledstrip Settings              *
 // **********************************
 
-// * Baud rate for both hardware and software serial
+// Update treshold in milliseconds, messages will only be sent on this interval
+#define UPDATE_INTERVAL 60000  // 1 minute
+//#define UPDATE_INTERVAL 300000 // 5 minutes
+
+// * Baud rate for both hardware and software 
 #define BAUD_RATE 115200
 
 // * P1 Meter RX pin
@@ -31,6 +35,8 @@
 
 // * MQTT Last reconnection counter
 long LAST_RECONNECT_ATTEMPT = 0;
+
+long LAST_UPDATE_SENT = 0;
 
 // * To be filled with EEPROM data
 char MQTT_HOST[64] = "";

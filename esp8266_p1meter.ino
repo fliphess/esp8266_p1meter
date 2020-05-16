@@ -227,8 +227,10 @@ bool decode_telegram(int len)
     int endChar = FindCharInArrayRev(telegram, '!', len);
     bool validCRCFound = false;
 
-    for (int cnt = 0; cnt < len; cnt++)
+    for (int cnt = 0; cnt < len; cnt++) {
         logger->print(telegram[cnt]);
+        logger->print("\n");
+    }
 
     if (startChar >= 0)
     {
@@ -351,16 +353,38 @@ void read_p1_serial()
             int len = p1_serial.readBytesUntil('\n', telegram, P1_MAXLINELENGTH);
             ESP.wdtEnable(1);
 
-            telegram[len] = '\n';
-            telegram[len + 1] = 0;
-            yield();
-
-            bool result = decode_telegram(len + 1);
-            if (result)
-                send_data_to_broker();
+            processLine(len);
         }
     }
 }
+
+void read_p1_hardwareserial()
+{
+    if (Serial.available())
+    {
+        memset(telegram, 0, sizeof(telegram));
+
+        while (Serial.available())
+        {
+            ESP.wdtDisable();
+            int len = Serial.readBytesUntil('\n', telegram, P1_MAXLINELENGTH);
+            ESP.wdtEnable(1);
+
+            processLine(len);
+        }
+    }
+}
+
+void processLine(int len) {
+    telegram[len] = '\n';
+    telegram[len + 1] = 0;
+    yield();
+
+    bool result = decode_telegram(len + 1);
+    if (result) {
+                send_data_to_broker();
+        }
+    }
 
 // **********************************
 // * EEPROM helpers                 *
@@ -478,21 +502,27 @@ void setup_mdns()
 void setup()
 {
     // * Configure Serial and EEPROM
-    Serial.begin(BAUD_RATE);
+    //Serial.begin(BAUD_RATE);
     EEPROM.begin(512);
 
     if (USE_HARDWARE_SERIAL) {
-        // Setup serial logging to a unused software pin
+        // Setup a hw serial connection for communication with the P1 meter
+        Serial.begin(BAUD_RATE, SERIAL_8N1, SERIAL_RX_ONLY, 3, true);
+
+        // Setup serial logging to a unused pin using SoftwareSerial
         SoftwareSerial* ss = new SoftwareSerial(-1, EXTERNAL_LOGGER_PIN);
         ss->begin(BAUD_RATE);
         ss->enableIntTx(false);
         logger = ss;
         logger->println("Logging using SoftwareSerial has been initialized");
     } else {
-        Serial.println("BLERG");
+        Serial.println("TODO Software serial not yet implemented!");
         // TODO implement a logger that works for a regular Serial port
         //logger = Serial;
         //logger->println("Logging using HardwareSerial has been initialized");
+
+        // * Start software serial for p1 meter
+        p1_serial.begin(BAUD_RATE);
     }
 
     // * Set led pin as output
@@ -500,9 +530,6 @@ void setup()
 
     // * Start ticker with 0.5 because we start in AP mode and try to connect
     ticker.attach(0.6, tick);
-
-    // * Start software serial for p1 meter
-    p1_serial.begin(BAUD_RATE);
 
     // * Get MQTT Server settings
     String settings_available = read_eeprom(134, 1);
@@ -522,6 +549,10 @@ void setup()
 
     // * WiFiManager local initialization. Once its business is done, there is no need to keep it around
     WiFiManager wifiManager;
+
+    if (USE_HARDWARE_SERIAL) {
+      wifiManager.setDebugOutput(false);
+    }
 
     // * Reset settings - uncomment for testing
     // wifiManager.resetSettings();
@@ -618,5 +649,9 @@ void loop()
         mqtt_client.loop();
     }
 
+    if (USE_HARDWARE_SERIAL) {
+        read_p1_hardwareserial();
+    } else {
     read_p1_serial();
+}
 }

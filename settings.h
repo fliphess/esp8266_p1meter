@@ -8,6 +8,9 @@
 // * P1 Meter RX pin
 #define P1_SERIAL_RX D2
 
+#define USE_HARDWARE_SERIAL true
+#define EXTERNAL_LOGGER_PIN D1
+
 // * Max telegram length
 #define P1_MAXLINELENGTH 64
 

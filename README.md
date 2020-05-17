@@ -17,7 +17,7 @@ To read the debug messages a seperate serial reader like a CH340 can be connecte
 | ----        | ----   |
 | GND         | GND    |
 | 3.3v        | RTS    |
-| D2          | DATA (RXD) |
+| RX          | DATA (RXD) |
 
 To connect my Landys and Gyr E350 (ZCF110), I used a 10K resistor connected between ESP's 3.3v pin and p1's DATA (RXD) pin.
 Many howto's mention RTS requires 5V (VIN) to activate the P1 port, but for me 3V3 suffices.

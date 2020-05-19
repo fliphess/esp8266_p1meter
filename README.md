@@ -8,8 +8,9 @@ This fork (tries) to add support for the `Landys and Gyr E360` smartmeter (ESMR5
 The ![original source](https://github.com/fliphess/esp8266_p1meter) has issues with ESMR5.0 meter who send telegrams every 1 second at a high 115200 baud rate. 
 The high baud rate causes the used SoftwareSerial to strugle to keep up and thus only recieves corrupted messages.
 
-This fork switches to using the Hardware serial port for communication with the meter. This has the disadvantage of no longer being able of read debug messages using the esp's build in usb port. 
-To read the debug messages a seperate serial reader like a CH340 can be connected to pin D1 and GND.
+This fork switches to using the main Hardware serial port (RX) for communication with the meter. This has the disadvantage of no longer being able of read debug messages using the esp's build in usb port. 
+To read the debug messages a seperate serial reader like a CH340 can be connected to pin D1 and GND. 
+Note that the secondairy esp8266 hardware serial does not support bit inversion and thus is not usable.
 
 ## Connection of the P1 meter to the ESP8266
 
@@ -17,7 +18,7 @@ To read the debug messages a seperate serial reader like a CH340 can be connecte
 | ----        | ----   |
 | GND         | GND    |
 | 3.3v        | RTS    |
-| D2          | DATA (RXD) |
+| RX          | DATA (RXD) |
 
 To connect my Landys and Gyr E350 (ZCF110), I used a 10K resistor connected between ESP's 3.3v pin and p1's DATA (RXD) pin.
 Many howto's mention RTS requires 5V (VIN) to activate the P1 port, but for me 3V3 suffices.

@@ -5,12 +5,8 @@ Software for the ESP2866 that sends P1 smart meter data to an mqtt broker (with 
 # about this fork
 This fork (tries) to add support for the `Landys and Gyr E360` smartmeter (ESMR5.0)
 
-The ![original source](https://github.com/fliphess/esp8266_p1meter) has issues with ESMR5.0 meter who send telegrams every 1 second at a high 115200 baud rate. 
-The high baud rate causes the used SoftwareSerial to strugle to keep up and thus only recieves corrupted messages.
-
-This fork switches to using the main Hardware serial port (RX) for communication with the meter. This has the disadvantage of no longer being able of read debug messages using the esp's build in usb port. 
-To read the debug messages a seperate serial reader like a CH340 can be connected to pin D1 and GND. 
-Note that the secondairy esp8266 hardware serial does not support bit inversion and thus is not usable.
+The ![original source](https://github.com/fliphess/esp8266_p1meter) has issues with ESMR5.0 meters who like to send telegrams every 1 second at a high 115200 baud rate. 
+This causes the used SoftwareSerial to strugle to keep up and thus only recieves corrupted messages. This fork switches to using the main Hardware serial port (RX) for communication with the meter.
 
 ## Connecting to the P1 meter
 Connect the ESP8266 to an 4 or [6 pin RJ11 cable](https://www.tinytronics.nl/shop/nl/kabels/adapters/rj12-naar-6-pins-dupont-jumper-adapter) following the diagram. A 6 pin cable allows the ESP8266 to be powered by ESMR5+ meters.

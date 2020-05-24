@@ -35,8 +35,16 @@ The nodemcu sends out to the following MQTT topics:
 sensors/power/p1meter/consumption_low_tarif 2209397
 sensors/power/p1meter/consumption_high_tarif 1964962
 sensors/power/p1meter/actual_consumption 313
-sensors/power/p1meter/instant_power_usage 313
-sensors/power/p1meter/instant_power_current 1000
+sensors/power/p1meter/actual_returndelivery 0
+sensors/power/p1meter/l1_instant_power_usage 313
+sensors/power/p1meter/l2_instant_power_usage 0
+sensors/power/p1meter/l3_instant_power_usage 0
+sensors/power/p1meter/l1_instant_power_current 1000
+sensors/power/p1meter/l2_instant_power_current 0
+sensors/power/p1meter/l3_instant_power_current 0
+sensors/power/p1meter/l1_voltage 233
+sensors/power/p1meter/l2_voltage 0
+sensors/power/p1meter/l3_voltage 0
 sensors/power/p1meter/gas_meter_m3 968922
 sensors/power/p1meter/actual_tarif_group 2
 sensors/power/p1meter/short_power_outages 3
@@ -72,15 +80,63 @@ I use this for home assistant `sensors.yaml`:
   value_template: "{{ value|float / 1000 }}"
 
 - platform: mqtt
-  name: P1 Instant Power Usage
+  name: P1 Actual Return Delivery
   unit_of_measurement: 'kW'
-  state_topic: "sensors/power/p1meter/instant_power_usage"
+  state_topic: "sensors/power/p1meter/actual_returndelivery"
   value_template: "{{ value|float / 1000 }}"
 
 - platform: mqtt
-  name: P1 Instant Power Current
+  name: P1 L1 Instant Power Usage
+  unit_of_measurement: 'kW'
+  state_topic: "sensors/power/p1meter/l1_instant_power_usage"
+  value_template: "{{ value|float / 1000 }}"
+
+  - platform: mqtt
+  name: P1 L2 Instant Power Usage
+  unit_of_measurement: 'kW'
+  state_topic: "sensors/power/p1meter/l2_instant_power_usage"
+  value_template: "{{ value|float / 1000 }}"
+
+  - platform: mqtt
+  name: P1 L3 Instant Power Usage
+  unit_of_measurement: 'kW'
+  state_topic: "sensors/power/p1meter/l3_instant_power_usage"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 L1 Instant Power Current
   unit_of_measurement: 'A'
-  state_topic: "sensors/power/p1meter/instant_power_current"
+  state_topic: "sensors/power/p1meter/l1_instant_power_current"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 L2 Instant Power Current
+  unit_of_measurement: 'A'
+  state_topic: "sensors/power/p1meter/l2_instant_power_current"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 L3 Instant Power Current
+  unit_of_measurement: 'A'
+  state_topic: "sensors/power/p1meter/l3_instant_power_current"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 L1 Voltage
+  unit_of_measurement: 'V'   
+  state_topic: "sensors/power/p1meter/l1_voltage"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 L2 Voltage
+  unit_of_measurement: 'V'   
+  state_topic: "sensors/power/p1meter/l2_voltage"
+  value_template: "{{ value|float / 1000 }}"
+
+- platform: mqtt
+  name: P1 L3 Voltage
+  unit_of_measurement: 'V'   
+  state_topic: "sensors/power/p1meter/l3_voltage"
   value_template: "{{ value|float / 1000 }}"
 
 - platform: mqtt

@@ -137,8 +137,18 @@ void send_data_to_broker()
     send_metric("consumption_low_tarif", CONSUMPTION_LOW_TARIF);
     send_metric("consumption_high_tarif", CONSUMPTION_HIGH_TARIF);
     send_metric("actual_consumption", ACTUAL_CONSUMPTION);
-    send_metric("instant_power_usage", INSTANT_POWER_USAGE);
-    send_metric("instant_power_current", INSTANT_POWER_CURRENT);
+    send_metric("actual_returndelivery", ACTUAL_RETURNDELIVERY);
+
+    send_metric("l1_instant_power_usage", L1_INSTANT_POWER_USAGE);
+    send_metric("l2_instant_power_usage", L2_INSTANT_POWER_USAGE);
+    send_metric("l3_instant_power_usage", L3_INSTANT_POWER_USAGE);
+    send_metric("l1_instant_power_current", L1_INSTANT_POWER_CURRENT);
+    send_metric("l2_instant_power_current", L2_INSTANT_POWER_CURRENT);
+    send_metric("l3_instant_power_current", L3_INSTANT_POWER_CURRENT);
+    send_metric("l1_voltage", L1_VOLTAGE);
+    send_metric("l2_voltage", L2_VOLTAGE);
+    send_metric("l3_voltage", L3_VOLTAGE);
+    
     send_metric("gas_meter_m3", GAS_METER_M3);
 
     send_metric("actual_tarif_group", ACTUAL_TARIF);
@@ -275,25 +285,75 @@ bool decode_telegram(int len)
     }
 
     // 1-0:1.7.0(00.424*kW) Actueel verbruik
-    // 1-0:2.7.0(00.000*kW) Actuele teruglevering
     // 1-0:1.7.x = Electricity consumption actual usage (DSMR v4.0)
     if (strncmp(telegram, "1-0:1.7.0", strlen("1-0:1.7.0")) == 0)
     {
         ACTUAL_CONSUMPTION = getValue(telegram, len, '(', '*');
     }
 
+    // 1-0:2.7.0(00.000*kW) Actuele teruglevering (-P) in 1 Watt resolution
+    if (strncmp(telegram, "1-0:2.7.0", strlen("1-0:2.7.0")) == 0)
+    {
+        ACTUAL_RETURNDELIVERY = getValue(telegram, len, '(', '*');
+    }
+
     // 1-0:21.7.0(00.378*kW)
-    // 1-0:21.7.0 = Instantaan vermogen Elektriciteit levering
+    // 1-0:21.7.0 = Instantaan vermogen Elektriciteit levering L1
     if (strncmp(telegram, "1-0:21.7.0", strlen("1-0:21.7.0")) == 0)
     {
-        INSTANT_POWER_USAGE = getValue(telegram, len, '(', '*');
+        L1_INSTANT_POWER_USAGE = getValue(telegram, len, '(', '*');
+    }
+
+    // 1-0:41.7.0(00.378*kW)
+    // 1-0:41.7.0 = Instantaan vermogen Elektriciteit levering L2
+    if (strncmp(telegram, "1-0:41.7.0", strlen("1-0:41.7.0")) == 0)
+    {
+        L2_INSTANT_POWER_USAGE = getValue(telegram, len, '(', '*');
+    }
+
+    // 1-0:61.7.0(00.378*kW)
+    // 1-0:61.7.0 = Instantaan vermogen Elektriciteit levering L3
+    if (strncmp(telegram, "1-0:61.7.0", strlen("1-0:61.7.0")) == 0)
+    {
+        L3_INSTANT_POWER_USAGE = getValue(telegram, len, '(', '*');
     }
 
     // 1-0:31.7.0(002*A)
-    // 1-0:31.7.0 = Instantane stroom Elektriciteit
+    // 1-0:31.7.0 = Instantane stroom Elektriciteit L1
     if (strncmp(telegram, "1-0:31.7.0", strlen("1-0:31.7.0")) == 0)
     {
-        INSTANT_POWER_CURRENT = getValue(telegram, len, '(', '*');
+        L1_INSTANT_POWER_CURRENT = getValue(telegram, len, '(', '*');
+    }
+    // 1-0:51.7.0(002*A)
+    // 1-0:51.7.0 = Instantane stroom Elektriciteit L2
+    if (strncmp(telegram, "1-0:51.7.0", strlen("1-0:51.7.0")) == 0)
+    {
+        L2_INSTANT_POWER_CURRENT = getValue(telegram, len, '(', '*');
+    }
+    // 1-0:71.7.0(002*A)
+    // 1-0:71.7.0 = Instantane stroom Elektriciteit L3
+    if (strncmp(telegram, "1-0:71.7.0", strlen("1-0:71.7.0")) == 0)
+    {
+        L3_INSTANT_POWER_CURRENT = getValue(telegram, len, '(', '*');
+    }
+
+    // 1-0:32.7.0(232.0*V)
+    // 1-0:32.7.0 = Voltage L1
+    if (strncmp(telegram, "1-0:32.7.0", strlen("1-0:32.7.0")) == 0)
+    {
+        L1_VOLTAGE = getValue(telegram, len, '(', '*');
+    }
+    // 1-0:52.7.0(232.0*V)
+    // 1-0:52.7.0 = Voltage L2
+    if (strncmp(telegram, "1-0:52.7.0", strlen("1-0:52.7.0")) == 0)
+    {
+        L2_VOLTAGE = getValue(telegram, len, '(', '*');
+    }   
+    // 1-0:72.7.0(232.0*V)
+    // 1-0:72.7.0 = Voltage L3
+    if (strncmp(telegram, "1-0:72.7.0", strlen("1-0:72.7.0")) == 0)
+    {
+        L3_VOLTAGE = getValue(telegram, len, '(', '*');
     }
 
     // 0-1:24.2.1(150531200000S)(00811.923*m3)

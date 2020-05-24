@@ -12,19 +12,37 @@ This fork switches to using the main Hardware serial port (RX) for communication
 To read the debug messages a seperate serial reader like a CH340 can be connected to pin D1 and GND. 
 Note that the secondairy esp8266 hardware serial does not support bit inversion and thus is not usable.
 
-## Connection of the P1 meter to the ESP8266
+## Connecting to the P1 meter
+Connect the ESP8266 to an 4 or [6 pin RJ11 cable](https://www.tinytronics.nl/shop/nl/kabels/adapters/rj12-naar-6-pins-dupont-jumper-adapter) following the diagram. A 6 pin cable allows the ESP8266 to be powered by ESMR5+ meters.
 
-| ESP8266 Pin | P1 Pin |
-| ----        | ----   |
-| GND         | GND    |
-| 3.3v        | RTS    |
-| RX          | DATA (RXD) |
+| P1 pin   | ESP8266 Pin |
+| ----     | ---- |
+| 2 - RTS  | 3.3v |
+| 3 - GND  | GND  |
+| 4 -      |      |
+| 5 - RXD (data) | RX (gpio3) |
 
-To connect my Landys and Gyr E350 (ZCF110), I used a 10K resistor connected between ESP's 3.3v pin and p1's DATA (RXD) pin.
-Many howto's mention RTS requires 5V (VIN) to activate the P1 port, but for me 3V3 suffices.
+On most Landys and Gyr models a 10K resistor should be used between the ESP's 3.3v and the p1's DATA (RXD) pin. Many howto's mention RTS requires 5V (VIN) to activate the P1 port, but for me 3V3 suffices.
 
-![RJ11 P1 connetor](http://gejanssen.com/howto/Slimme-meter-uitlezen/RJ11-pinout.png)
+![Wiring](https://raw.githubusercontent.com/daniel-jong/esp8266_p1meter/master/assets/esp8266_p1meter_bb.png)
 
+<details><summary>Optional: Powering the ESP8266 using your ESMR5+ meter</summary>
+<p>
+When using a 6 pin cable you can use the powersource provided by the meter.
+  
+| P1 pin   | ESP8266 Pin |
+| ----     | ---- |
+| 1 - 5v out | 5v / Vin |
+| 2 - RTS  | 3.3v |
+| 3 - GND  | GND  |
+| 4 -      |      |
+| 5 - RXD (data) | RX (gpio3) |
+| 6 - GND  | GND  |
+  
+![Wiring powered by meter](https://raw.githubusercontent.com/daniel-jong/esp8266_p1meter/master/assets/esp8266_p1meter_bb_PoweredByMeter.png)
+
+</p>
+</details>
 
 ## Data Sent
 

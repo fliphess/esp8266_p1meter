@@ -9,8 +9,11 @@
 // * Baud rate for both hardware and software 
 #define BAUD_RATE 115200
 
-// * P1 Meter RX pin
-#define P1_SERIAL_RX D2
+// The RX pin used when using hardware serial
+#define HARDWARE_SERIAL_RX RX
+
+// The RX pin used when using software serial
+#define SOFTWARE_SERIAL_RX D2
 
 #define USE_HARDWARE_SERIAL true
 #define EXTERNAL_LOGGER_PIN D1

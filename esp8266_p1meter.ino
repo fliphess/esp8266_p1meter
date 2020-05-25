@@ -23,7 +23,7 @@ WiFiClient espClient;
 PubSubClient mqtt_client(espClient);
 
 // * Initiate Software Serial
-SoftwareSerial p1_serial(P1_SERIAL_RX, -1, true); // (RX, TX. inverted, buffer)
+SoftwareSerial p1_serial(SOFTWARE_SERIAL_RX, -1, true); // (RX, TX. inverted, buffer)
 Stream* logger;
 
 // **********************************
@@ -568,7 +568,7 @@ void setup()
 
     if (USE_HARDWARE_SERIAL) {
         // Setup a hw serial connection for communication with the P1 meter
-        Serial.begin(BAUD_RATE, SERIAL_8N1, SERIAL_RX_ONLY, 3, true);
+        Serial.begin(BAUD_RATE, SERIAL_8N1, SERIAL_RX_ONLY, HARDWARE_SERIAL_RX, true);
 
         // Setup serial logging to a unused pin using SoftwareSerial
         SoftwareSerial* ss = new SoftwareSerial(-1, EXTERNAL_LOGGER_PIN);

@@ -2,14 +2,32 @@
 
 Software for the ESP2866 that sends P1 smart meter data to an mqtt broker (with OTA firmware updates)
 
-# about this fork
+## about this fork
 This fork (tries) to add support for the `Landys and Gyr E360` smartmeter (ESMR5.0)
 
 The ![original source](https://github.com/fliphess/esp8266_p1meter) has issues with ESMR5.0 meters who like to send telegrams every 1 second at a high 115200 baud rate. 
-This causes the used SoftwareSerial to strugle to keep up and thus only recieves corrupted messages. This fork switches to using the main Hardware serial port (RX) for communication with the meter.
+This causes the used SoftwareSerial to struggle to keep up and thus only receives corrupted messages. This fork switches to using the main Hardware serial port (RX) for communication with the meter.
+
+# Getting started
+This setup requires:
+- An Esp8266 (nodeMcu and Wemos d1 mini have been tested)
+- A 10k ohm resistor
+- A 4 or [6 pin RJ11 cable](https://www.tinytronics.nl/shop/nl/kabels/adapters/rj12-naar-6-pins-dupont-jumper-adapter) A 4 pin cable works great, A 6 pin cable can also power the ESP8266 on most ESMR5+ meters.
+
+Setting up your Arduino IDE:
+- Ensure you have selected the right board
+- Please note: I have only tested this on the 160mhz frequency mode, so select this in the tools menu for now.
+- Using the Tools->Manage Libraries... install `PubSubClient` and `WifiManager`
+- In the file `Settings.h` change `OTA_PASSWORD` to a safe secret value
+- Flash the software
+
+Finishing off:
+- You should now see a new wifi network `ESP******` connect to this wifi network, a popup should appear, else manually navigate to `192.168.4.1`
+- Configure your wifi and Mqtt settings
+- To check if everything is up and running you can listen to the MQTT topic `hass/status`, on startup a single message is sent.
 
 ## Connecting to the P1 meter
-Connect the ESP8266 to an 4 or [6 pin RJ11 cable](https://www.tinytronics.nl/shop/nl/kabels/adapters/rj12-naar-6-pins-dupont-jumper-adapter) following the diagram. A 6 pin cable allows the ESP8266 to be powered by ESMR5+ meters.
+Connect the ESP8266 to an RJ11 cable/connector following the diagram.
 
 | P1 pin   | ESP8266 Pin |
 | ----     | ---- |
@@ -24,7 +42,7 @@ On most Landys and Gyr models a 10K resistor should be used between the ESP's 3.
 
 <details><summary>Optional: Powering the ESP8266 using your ESMR5+ meter</summary>
 <p>
-When using a 6 pin cable you can use the powersource provided by the meter.
+When using a 6 pin cable you can use the power source provided by the meter.
   
 | P1 pin   | ESP8266 Pin |
 | ----     | ---- |
@@ -71,7 +89,7 @@ sensors/power/p1meter/short_power_peaks 0
 
 Use this [example](https://raw.githubusercontent.com/daniel-jong/esp8266_p1meter/master/assets/p1_sensors.yaml) for home assistant's `sensor.yaml`
 
-The automations are yours to create.
+The automatons are yours to create.
 And always remember that sending alerts in case of a power outtage only make sense when you own a UPS battery :)
 
 ## Thanks to

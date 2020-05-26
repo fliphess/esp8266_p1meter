@@ -22,8 +22,6 @@ WiFiClient espClient;
 // * Initiate MQTT client
 PubSubClient mqtt_client(espClient);
 
-// * Initiate Software Serial
-SoftwareSerial p1_serial(SOFTWARE_SERIAL_RX, -1, true); // (RX, TX. inverted, buffer)
 Stream* logger;
 
 // **********************************
@@ -401,23 +399,6 @@ bool decode_telegram(int len)
     return validCRCFound;
 }
 
-void read_p1_serial()
-{
-    if (p1_serial.available())
-    {
-        memset(telegram, 0, sizeof(telegram));
-
-        while (p1_serial.available())
-        {
-            ESP.wdtDisable();
-            int len = p1_serial.readBytesUntil('\n', telegram, P1_MAXLINELENGTH);
-            ESP.wdtEnable(1);
-
-            processLine(len);
-        }
-    }
-}
-
 void read_p1_hardwareserial()
 {
     if (Serial.available())
@@ -562,29 +543,18 @@ void setup_mdns()
 
 void setup()
 {
-    // * Configure Serial and EEPROM
-    //Serial.begin(BAUD_RATE);
+    // * Configure EEPROM
     EEPROM.begin(512);
 
-    if (USE_HARDWARE_SERIAL) {
-        // Setup a hw serial connection for communication with the P1 meter
-        Serial.begin(BAUD_RATE, SERIAL_8N1, SERIAL_RX_ONLY, HARDWARE_SERIAL_RX, true);
+    // Setup a hw serial connection for communication with the P1 meter
+    Serial.begin(BAUD_RATE, SERIAL_8N1, SERIAL_RX_ONLY, HARDWARE_SERIAL_RX, true);
 
-        // Setup serial logging to a unused pin using SoftwareSerial
-        SoftwareSerial* ss = new SoftwareSerial(-1, EXTERNAL_LOGGER_PIN);
-        ss->begin(BAUD_RATE);
-        ss->enableIntTx(false);
-        logger = ss;
-        logger->println("Logging using SoftwareSerial has been initialized");
-    } else {
-        Serial.println("TODO Software serial not yet implemented!");
-        // TODO implement a logger that works for a regular Serial port
-        //logger = Serial;
-        //logger->println("Logging using HardwareSerial has been initialized");
-
-        // * Start software serial for p1 meter
-        p1_serial.begin(BAUD_RATE);
-    }
+    // Setup serial logging to a unused pin using SoftwareSerial
+    SoftwareSerial* ss = new SoftwareSerial(-1, EXTERNAL_LOGGER_PIN);
+    ss->begin(BAUD_RATE);
+    ss->enableIntTx(false);
+    logger = ss;
+    logger->println("Logging using SoftwareSerial has been initialized");
 
     // * Set led pin as output
     pinMode(LED_BUILTIN, OUTPUT);
@@ -611,9 +581,8 @@ void setup()
     // * WiFiManager local initialization. Once its business is done, there is no need to keep it around
     WiFiManager wifiManager;
 
-    if (USE_HARDWARE_SERIAL) {
-        wifiManager.setDebugOutput(false);
-    }
+    // Disable wifimanger debug output as this is fixed to use the main Serial for logging.
+    wifiManager.setDebugOutput(false);
 
     // * Reset settings - uncomment for testing
     // wifiManager.resetSettings();
@@ -710,10 +679,6 @@ void loop()
     }
     
     if (now - LAST_UPDATE_SENT > UPDATE_INTERVAL) {
-        if (USE_HARDWARE_SERIAL) {
-            read_p1_hardwareserial();
-        } else {
-            read_p1_serial();
-        }
+        read_p1_hardwareserial();
     }
 }

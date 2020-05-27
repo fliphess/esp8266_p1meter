@@ -31,11 +31,11 @@ Stream* logger;
 // * Gets called when WiFiManager enters configuration mode
 void configModeCallback(WiFiManager *myWiFiManager)
 {
-    logger->println(F("Entered config mode"));
-    logger->println(WiFi.softAPIP());
+    Serial.println(F("Entered config mode"));
+    Serial.println(WiFi.softAPIP());
 
     // * If you used auto generated SSID, print it
-    logger->println(myWiFiManager->getConfigPortalSSID());
+    Serial.println(myWiFiManager->getConfigPortalSSID());
 
     // * Entered config mode, make led toggle faster
     ticker.attach(0.2, tick);
@@ -60,14 +60,14 @@ void tick()
 // * Send a message to a broker topic
 void send_mqtt_message(const char *topic, char *payload)
 {
-    logger->printf("MQTT Outgoing on %s: ", topic);
-    logger->println(payload);
+    Serial.printf("MQTT Outgoing on %s: ", topic);
+    Serial.println(payload);
 
     bool result = mqtt_client.publish(topic, payload, false);
 
     if (!result)
     {
-        logger->printf("MQTT publish to topic %s failed\n", topic);
+        Serial.printf("MQTT publish to topic %s failed\n", topic);
     }
 }
 
@@ -80,12 +80,12 @@ bool mqtt_reconnect()
     while (!mqtt_client.connected() && MQTT_RECONNECT_RETRIES < MQTT_MAX_RECONNECT_TRIES)
     {
         MQTT_RECONNECT_RETRIES++;
-        logger->printf("MQTT connection attempt %d / %d ...\n", MQTT_RECONNECT_RETRIES, MQTT_MAX_RECONNECT_TRIES);
+        Serial.printf("MQTT connection attempt %d / %d ...\n", MQTT_RECONNECT_RETRIES, MQTT_MAX_RECONNECT_TRIES);
 
         // * Attempt to connect
         if (mqtt_client.connect(HOSTNAME, MQTT_USER, MQTT_PASS))
         {
-            logger->println(F("MQTT connected!"));
+            Serial.println(F("MQTT connected!"));
 
             // * Once connected, publish an announcement...
             char *message = new char[16 + strlen(HOSTNAME) + 1];
@@ -93,14 +93,14 @@ bool mqtt_reconnect()
             strcat(message, HOSTNAME);
             mqtt_client.publish("hass/status", message);
 
-            logger->printf("MQTT root topic: %s\n", MQTT_ROOT_TOPIC);
+            Serial.printf("MQTT root topic: %s\n", MQTT_ROOT_TOPIC);
         }
         else
         {
-            logger->print(F("MQTT Connection failed: rc="));
-            logger->println(mqtt_client.state());
-            logger->println(F(" Retrying in 5 seconds"));
-            logger->println("");
+            Serial.print(F("MQTT Connection failed: rc="));
+            Serial.println(mqtt_client.state());
+            Serial.println(F(" Retrying in 5 seconds"));
+            Serial.println("");
 
             // * Wait 5 seconds before retrying
             delay(5000);
@@ -109,7 +109,7 @@ bool mqtt_reconnect()
 
     if (MQTT_RECONNECT_RETRIES >= MQTT_MAX_RECONNECT_TRIES)
     {
-        logger->printf("*** MQTT connection failed, giving up after %d tries ...\n", MQTT_RECONNECT_RETRIES);
+        Serial.printf("*** MQTT connection failed, giving up after %d tries ...\n", MQTT_RECONNECT_RETRIES);
         return false;
     }
 
@@ -118,10 +118,10 @@ bool mqtt_reconnect()
 
 void send_metric(String name, long metric)
 {
-    logger->print(F("Sending metric to broker: "));
-    logger->print(name);
-    logger->print(F("="));
-    logger->println(metric);
+    Serial.print(F("Sending metric to broker: "));
+    Serial.print(name);
+    Serial.print(F("="));
+    Serial.println(metric);
 
     char output[10];
     ltoa(metric, output, sizeof(output));
@@ -236,9 +236,9 @@ bool decode_telegram(int len)
     bool validCRCFound = false;
 
     for (int cnt = 0; cnt < len; cnt++) {
-        logger->print(telegram[cnt]);
+        Serial.print(telegram[cnt]);
     }
-    logger->print("\n");
+    Serial.print("\n");
 
     if (startChar >= 0)
     {
@@ -257,9 +257,9 @@ bool decode_telegram(int len)
         validCRCFound = (strtol(messageCRC, NULL, 16) == currentCRC);
 
         if (validCRCFound)
-            logger->println(F("CRC Valid!"));
+            Serial.println(F("CRC Valid!"));
         else
-            logger->println(F("CRC Invalid!"));
+            Serial.println(F("CRC Invalid!"));
 
         currentCRC = 0;
     }
@@ -434,7 +434,7 @@ void processLine(int len) {
 
 String read_eeprom(int offset, int len)
 {
-    logger->print(F("read_eeprom()"));
+    Serial.print(F("read_eeprom()"));
 
     String res = "";
     for (int i = 0; i < len; ++i)
@@ -446,7 +446,7 @@ String read_eeprom(int offset, int len)
 
 void write_eeprom(int offset, int len, String value)
 {
-    logger->println(F("write_eeprom()"));
+    Serial.println(F("write_eeprom()"));
     for (int i = 0; i < len; ++i)
     {
         if ((unsigned)i < value.length())
@@ -469,7 +469,7 @@ bool shouldSaveConfig = false;
 // * Callback notifying us of the need to save config
 void save_wifi_config_callback ()
 {
-    logger->println(F("Should save config"));
+    Serial.println(F("Should save config"));
     shouldSaveConfig = true;
 }
 
@@ -479,7 +479,7 @@ void save_wifi_config_callback ()
 
 void setup_ota()
 {
-    logger->println(F("Arduino OTA activated."));
+    Serial.println(F("Arduino OTA activated."));
 
     // * Port defaults to 8266
     ArduinoOTA.setPort(8266);
@@ -490,36 +490,36 @@ void setup_ota()
 
     ArduinoOTA.onStart([]()
     {
-        logger->println(F("Arduino OTA: Start"));
+        Serial.println(F("Arduino OTA: Start"));
     });
 
     ArduinoOTA.onEnd([]()
     {
-        logger->println(F("Arduino OTA: End (Running reboot)"));
+        Serial.println(F("Arduino OTA: End (Running reboot)"));
     });
 
     ArduinoOTA.onProgress([](unsigned int progress, unsigned int total)
     {
-        logger->printf("Arduino OTA Progress: %u%%\r", (progress / (total / 100)));
+        Serial.printf("Arduino OTA Progress: %u%%\r", (progress / (total / 100)));
     });
 
     ArduinoOTA.onError([](ota_error_t error)
     {
-        logger->printf("Arduino OTA Error[%u]: ", error);
+        Serial.printf("Arduino OTA Error[%u]: ", error);
         if (error == OTA_AUTH_ERROR)
-            logger->println(F("Arduino OTA: Auth Failed"));
+            Serial.println(F("Arduino OTA: Auth Failed"));
         else if (error == OTA_BEGIN_ERROR)
-            logger->println(F("Arduino OTA: Begin Failed"));
+            Serial.println(F("Arduino OTA: Begin Failed"));
         else if (error == OTA_CONNECT_ERROR)
-            logger->println(F("Arduino OTA: Connect Failed"));
+            Serial.println(F("Arduino OTA: Connect Failed"));
         else if (error == OTA_RECEIVE_ERROR)
-            logger->println(F("Arduino OTA: Receive Failed"));
+            Serial.println(F("Arduino OTA: Receive Failed"));
         else if (error == OTA_END_ERROR)
-            logger->println(F("Arduino OTA: End Failed"));
+            Serial.println(F("Arduino OTA: End Failed"));
     });
 
     ArduinoOTA.begin();
-    logger->println(F("Arduino OTA finished"));
+    Serial.println(F("Arduino OTA finished"));
 }
 
 // **********************************
@@ -528,7 +528,7 @@ void setup_ota()
 
 void setup_mdns()
 {
-    logger->println(F("Starting MDNS responder service"));
+    Serial.println(F("Starting MDNS responder service"));
 
     bool mdns_result = MDNS.begin(HOSTNAME);
     if (mdns_result)
@@ -546,15 +546,15 @@ void setup()
     // * Configure EEPROM
     EEPROM.begin(512);
 
-    // Setup a hw serial connection for communication with the P1 meter
-    Serial.begin(BAUD_RATE, SERIAL_8N1, SERIAL_RX_ONLY, HARDWARE_SERIAL_RX, true);
+    // Setup a hw serial connection for communication with the P1 meter and logging
+    Serial.begin(BAUD_RATE, SERIAL_8N1, SERIAL_FULL, TX, false);
+    Serial.println("");
+    Serial.println("Swapping UART0 RX to inverted");
+    Serial.flush();
 
-    // Setup serial logging to a unused pin using SoftwareSerial
-    SoftwareSerial* ss = new SoftwareSerial(-1, EXTERNAL_LOGGER_PIN);
-    ss->begin(BAUD_RATE);
-    ss->enableIntTx(false);
-    logger = ss;
-    logger->println("Logging using SoftwareSerial has been initialized");
+    // Invert the RX serialport by setting a register value, this way the TX might continue normally allowing the serial monitor to read println's
+    USC0(UART0) = USC0(UART0) | BIT(UCRXI);
+    Serial.println("Serial port is ready to recieve.");
 
     // * Set led pin as output
     pinMode(LED_BUILTIN, OUTPUT);
@@ -581,9 +581,6 @@ void setup()
     // * WiFiManager local initialization. Once its business is done, there is no need to keep it around
     WiFiManager wifiManager;
 
-    // Disable wifimanger debug output as this is fixed to use the main Serial for logging.
-    wifiManager.setDebugOutput(false);
-
     // * Reset settings - uncomment for testing
     // wifiManager.resetSettings();
 
@@ -606,7 +603,7 @@ void setup()
     // * Reset when no connection after 10 seconds
     if (!wifiManager.autoConnect())
     {
-        logger->println(F("Failed to connect to WIFI and hit timeout"));
+        Serial.println(F("Failed to connect to WIFI and hit timeout"));
 
         // * Reset and try again, or maybe put it to deep sleep
         ESP.reset();
@@ -622,7 +619,7 @@ void setup()
     // * Save the custom parameters to FS
     if (shouldSaveConfig)
     {
-        logger->println(F("Saving WiFiManager config"));
+        Serial.println(F("Saving WiFiManager config"));
 
         write_eeprom(0, 64, MQTT_HOST);   // * 0-63
         write_eeprom(64, 6, MQTT_PORT);   // * 64-69
@@ -633,7 +630,7 @@ void setup()
     }
 
     // * If you get here you have connected to the WiFi
-    logger->println(F("Connected to WIFI..."));
+    Serial.println(F("Connected to WIFI..."));
 
     // * Keep LED on
     ticker.detach();
@@ -646,7 +643,7 @@ void setup()
     setup_mdns();
 
     // * Setup MQTT
-    logger->printf("MQTT connecting to: %s:%s\n", MQTT_HOST, MQTT_PORT);
+    Serial.printf("MQTT connecting to: %s:%s\n", MQTT_HOST, MQTT_PORT);
 
     mqtt_client.setServer(MQTT_HOST, atoi(MQTT_PORT));
 

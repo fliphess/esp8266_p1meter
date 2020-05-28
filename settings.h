@@ -14,7 +14,7 @@
 #define SERIAL_TX TX
 
 // * Max telegram length
-#define P1_MAXLINELENGTH 64
+#define P1_MAXLINELENGTH 1050
 
 // * The hostname of our little creature
 #define HOSTNAME "p1meter"

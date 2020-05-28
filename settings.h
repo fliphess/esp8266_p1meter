@@ -9,9 +9,9 @@
 // * Baud rate for both hardware and software 
 #define BAUD_RATE 115200
 
-// The RX pin used when using hardware serial
-#define HARDWARE_SERIAL_RX RX
-#define EXTERNAL_LOGGER_PIN D1
+// The used serial pins, note that this can only be UART0, as other ports dont support the required inversion
+#define SERIAL_RX RX
+#define SERIAL_TX TX
 
 // * Max telegram length
 #define P1_MAXLINELENGTH 64

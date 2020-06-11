@@ -15,13 +15,13 @@
 - platform: mqtt
   name: P1 Return Delivery High Tariff
   unit_of_measurement: 'kWh'
-  state_topic: "sensors/power/p1meter/consumption_high_tarif"
+  state_topic: "sensors/power/p1meter/returndelivery_high_tarif"
   value_template: "{{ value|float / 1000 }}"
 
 - platform: mqtt
   name: P1 Return Delivery Low Tariff
   unit_of_measurement: 'kWh'
-  state_topic: "sensors/power/p1meter/consumption_low_tarif"
+  state_topic: "sensors/power/p1meter/returndelivery_low_tarif"
   value_template: "{{ value|float / 1000 }}"
 
 - platform: mqtt

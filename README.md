@@ -3,20 +3,19 @@
 Software for the ESP2866 that sends P1 smart meter data to an mqtt broker (with OTA firmware updates)
 
 ## about this fork
-This fork (tries) to add support for the `Landys and Gyr E360` smartmeter (ESMR5.0)
+This fork (tries) to add support for the `Landys and Gyr E360` smartmeter (DSMR5.0)
 
-The ![original source](https://github.com/fliphess/esp8266_p1meter) has issues with ESMR5.0 meters who like to send telegrams every 1 second at a high 115200 baud rate. 
+The ![original source](https://github.com/fliphess/esp8266_p1meter) has issues with DSMR5.0 meters who like to send telegrams every 1 second at a high 115200 baud rate. 
 This causes the used SoftwareSerial to struggle to keep up and thus only receives corrupted messages. This fork switches to using the main Hardware serial port (RX) for communication with the meter.
 
 # Getting started
 This setup requires:
-- An Esp8266 (nodeMcu and Wemos d1 mini have been tested)
+- An esp8266 (nodeMcu and Wemos d1 mini have been tested)
 - A 10k ohm resistor
-- A 4 or [6 pin RJ11 cable](https://www.tinytronics.nl/shop/nl/kabels/adapters/rj12-naar-6-pins-dupont-jumper-adapter) A 4 pin cable works great, A 6 pin cable can also power the ESP8266 on most ESMR5+ meters.
+- A 4 pin RJ11 or [6 pin RJ12 cable](https://www.tinytronics.nl/shop/nl/kabels/adapters/rj12-naar-6-pins-dupont-jumper-adapter) Both cables work great, but a 6 pin cable can also power the esp8266 on most DSMR5+ meters.
 
 Setting up your Arduino IDE:
 - Ensure you have selected the right board
-- Please note: I have only tested this on the 160mhz frequency mode, so select this in the tools menu for now.
 - Using the Tools->Manage Libraries... install `PubSubClient` and `WifiManager`
 - In the file `Settings.h` change `OTA_PASSWORD` to a safe secret value
 - Flash the software
@@ -27,7 +26,7 @@ Finishing off:
 - To check if everything is up and running you can listen to the MQTT topic `hass/status`, on startup a single message is sent.
 
 ## Connecting to the P1 meter
-Connect the ESP8266 to an RJ11 cable/connector following the diagram.
+Connect the esp8266 to an RJ11 cable/connector following the diagram.
 
 | P1 pin   | ESP8266 Pin |
 | ----     | ---- |
@@ -40,8 +39,10 @@ On most Landys and Gyr models a 10K resistor should be used between the ESP's 3.
 
 ![Wiring](https://raw.githubusercontent.com/daniel-jong/esp8266_p1meter/master/assets/esp8266_p1meter_bb.png)
 
-<details><summary>Optional: Powering the ESP8266 using your ESMR5+ meter</summary>
+### Optional: Powering the esp8266 using your DSMR5+ meter 
+<details><summary>Expand to see wiring description</summary>
 <p>
+  
 When using a 6 pin cable you can use the power source provided by the meter.
   
 | P1 pin   | ESP8266 Pin |
@@ -52,7 +53,7 @@ When using a 6 pin cable you can use the power source provided by the meter.
 | 4 -      |      |
 | 5 - RXD (data) | RX (gpio3) |
 | 6 - GND  | GND  |
-  
+
 ![Wiring powered by meter](https://raw.githubusercontent.com/daniel-jong/esp8266_p1meter/master/assets/esp8266_p1meter_bb_PoweredByMeter.png)
 
 </p>

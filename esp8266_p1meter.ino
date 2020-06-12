@@ -134,6 +134,8 @@ void send_data_to_broker()
 {
     send_metric("consumption_low_tarif", CONSUMPTION_LOW_TARIF);
     send_metric("consumption_high_tarif", CONSUMPTION_HIGH_TARIF);
+    send_metric("returndelivery_low_tarif", RETURNDELIVERY_LOW_TARIF);
+    send_metric("returndelivery_high_tarif", RETURNDELIVERY_HIGH_TARIF);
     send_metric("actual_consumption", ACTUAL_CONSUMPTION);
     send_metric("actual_returndelivery", ACTUAL_RETURNDELIVERY);
 
@@ -280,6 +282,20 @@ bool decode_telegram(int len)
     if (strncmp(telegram, "1-0:1.8.2", strlen("1-0:1.8.2")) == 0)
     {
         CONSUMPTION_HIGH_TARIF = getValue(telegram, len, '(', '*');
+    }
+	
+    // 1-0:2.8.1(000560.157*kWh)
+    // 1-0:2.8.1 = Elektra teruglevering laag tarief (DSMR v4.0)
+    if (strncmp(telegram, "1-0:2.8.1", strlen("1-0:2.8.1")) == 0)
+    {
+        RETURNDELIVERY_LOW_TARIF = getValue(telegram, len, '(', '*');
+    }
+
+    // 1-0:2.8.2(000560.157*kWh)
+    // 1-0:2.8.2 = Elektra teruglevering hoog tarief (DSMR v4.0)
+    if (strncmp(telegram, "1-0:2.8.2", strlen("1-0:2.8.2")) == 0)
+    {
+        RETURNDELIVERY_HIGH_TARIF = getValue(telegram, len, '(', '*');
     }
 
     // 1-0:1.7.0(00.424*kW) Actueel verbruik

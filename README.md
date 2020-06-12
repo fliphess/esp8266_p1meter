@@ -66,6 +66,8 @@ The software sends out to the following MQTT topics:
 ```
 sensors/power/p1meter/consumption_low_tarif 2209397
 sensors/power/p1meter/consumption_high_tarif 1964962
+sensors/power/p1meter/returndelivery_low_tarif 2209397
+sensors/power/p1meter/returndelivery_high_tarif 1964962
 sensors/power/p1meter/actual_consumption 313
 sensors/power/p1meter/actual_returndelivery 0
 sensors/power/p1meter/l1_instant_power_usage 313

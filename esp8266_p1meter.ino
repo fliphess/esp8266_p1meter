@@ -22,8 +22,6 @@ WiFiClient espClient;
 // * Initiate MQTT client
 PubSubClient mqtt_client(espClient);
 
-Stream* logger;
-
 // **********************************
 // * WIFI                           *
 // **********************************

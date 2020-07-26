@@ -14,11 +14,16 @@ This setup requires:
 - A 10k ohm resistor
 - A 4 pin RJ11 or [6 pin RJ12 cable](https://www.tinytronics.nl/shop/nl/kabels/adapters/rj12-naar-6-pins-dupont-jumper-adapter) Both cables work great, but a 6 pin cable can also power the esp8266 on most DSMR5+ meters.
 
-Setting up your Arduino IDE:
+Compiling up using Arduino IDE:
 - Ensure you have selected the right board
 - Using the Tools->Manage Libraries... install `PubSubClient` and `WifiManager`
 - In the file `Settings.h` change `OTA_PASSWORD` to a safe secret value
 - Flash the software
+
+Compiling up using PlatformIO:
+- Ensure the correct board type is selected in project configuration
+- In the file `Settings.h` change `OTA_PASSWORD` to a safe secret value
+- Upload the software.
 
 Finishing off:
 - You should now see a new wifi network `ESP******` connect to this wifi network, a popup should appear, else manually navigate to `192.168.4.1`

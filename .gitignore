@@ -33,3 +33,6 @@
 
 # Visual studio Code settings folder
 .vscode/
+
+# PlatformIo
+.pio/

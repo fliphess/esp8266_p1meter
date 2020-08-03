@@ -1,5 +1,5 @@
 // **********************************
-// * Ledstrip Settings              *
+// * Settings                       *
 // **********************************
 
 // Update treshold in milliseconds, messages will only be sent on this interval
@@ -9,9 +9,10 @@
 // * Baud rate for both hardware and software 
 #define BAUD_RATE 115200
 
-// The used serial pins, note that this can only be UART0, as other ports dont support the required inversion
-#define SERIAL_RX RX
-#define SERIAL_TX TX
+// The used serial pins, note that this can only be UART0, as other serial port doesn't support inversion
+// By default the UART0 serial will be used. These settings displayed here just as a reference. 
+// #define SERIAL_RX RX
+// #define SERIAL_TX TX
 
 // * Max telegram length
 #define P1_MAXLINELENGTH 1050

@@ -560,8 +560,8 @@ void setup()
     // * Configure EEPROM
     EEPROM.begin(512);
 
-    // Setup a hw serial connection for communication with the P1 meter and logging
-    Serial.begin(BAUD_RATE, SERIAL_8N1, SERIAL_FULL, SERIAL_TX, false);
+    // Setup a hw serial connection for communication with the P1 meter and logging (not using inversion)
+    Serial.begin(BAUD_RATE, SERIAL_8N1, SERIAL_FULL);
     Serial.println("");
     Serial.println("Swapping UART0 RX to inverted");
     Serial.flush();

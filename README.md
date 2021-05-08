@@ -2,6 +2,8 @@
 
 Software for the ESP2866 that sends P1 smart meter data to an mqtt broker (with OTA firmware updates)
 
+**08-05-2021: I've not used this sketch myself for several years now and as such it became a bit outdated: It supports only older meters with version 2.2 and 2.0 and the development has halted. I recommend people with newer meters to have a look at [this fork](https://github.com/daniel-jong/esp8266_p1meter) instead.**
+
 ## Connection of the P1 meter to the ESP8266
 
 | ESP8266 Pin | P1 Pin |
